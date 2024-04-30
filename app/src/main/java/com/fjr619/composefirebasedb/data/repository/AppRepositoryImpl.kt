@@ -2,19 +2,15 @@ package com.fjr619.composefirebasedb.data.repository
 
 import com.fjr619.composefirebasedb.data.model.toDomain
 import com.fjr619.composefirebasedb.data.realtime_database.RealtimeDatabaseSource
-import com.fjr619.composefirebasedb.domain.model.Weight
+import com.fjr619.composefirebasedb.domain.model.Task
 import com.fjr619.composefirebasedb.domain.repository.AppRepository
-import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 class AppRepositoryImpl(
     private val realtimeDatabaseSource: RealtimeDatabaseSource
 ): AppRepository {
-    override fun getItems(): Flow<Result<List<Weight>>> {
+    override fun getItems(): Flow<Result<List<Task>>> {
         return realtimeDatabaseSource.getItems()
             .map {
                 it.map {entity ->

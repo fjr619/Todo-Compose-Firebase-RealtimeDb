@@ -3,9 +3,13 @@ package com.fjr619.composefirebasedb
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,12 +51,27 @@ class MainActivity : ComponentActivity() {
                             val homeViewModel = koinViewModel<HomeViewModel>()
                             val state by homeViewModel.state.collectAsStateWithLifecycle()
                             Surface(modifier = Modifier.fillMaxSize()) {
-                                Text(text = "$state")
                                 Column {
                                     Button(onClick = {
                                         homeViewModel.add()
                                     }) {
                                         Text(text = "ADD")
+                                    }
+                                    LazyColumn(
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        items(
+                                            items = state.items,
+                                            key = {
+                                                it.id
+                                            }
+                                        ) {
+                                            ListItem(
+                                                modifier = Modifier.clickable {
+                                                                              println("aaaa $it")
+                                                },
+                                                headlineContent = { Text(text = it.id) })
+                                        }
                                     }
                                 }
                             }
