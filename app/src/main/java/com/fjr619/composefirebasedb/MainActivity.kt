@@ -19,12 +19,8 @@ import com.google.firebase.database.FirebaseDatabase
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         setContent {
             ComposeFirebaseDBTheme {
@@ -42,21 +38,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ComposeFirebaseDBTheme {
-        Greeting("Android")
     }
 }
