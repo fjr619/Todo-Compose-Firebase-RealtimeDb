@@ -33,8 +33,9 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref="firebase-bom"}
 firebase-rdt = { group = "com.google.firebase", name="firebase-database" }
 
-koin-bom = { module = "io.insert-koin:koin-bom", version = "koin-bom" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
+koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose"}
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
 
@@ -44,6 +45,7 @@ lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-ru
 [bundles]
 koin = [
     "koin-core",
+    "koin-android",
     "koin-androidx-compose",
     "koin-androidx-compose-navigation"
 ]
