@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1069724049756",
+    "project_id": "compose-firebase-d1be4",
+    "storage_bucket": "compose-firebase-d1be4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069724049756:android:f5861c58d866a0668e6199",
+        "android_client_info": {
+          "package_name": "com.fjr619.composefirebasedb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa3onvGB7mN87cWeXzk9fOUOYWrs2tJ5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
