@@ -2,6 +2,8 @@ package com.fjr619.composefirebasedb
 
 import android.app.Application
 import com.fjr619.composefirebasedb.di.dataModule
+import com.fjr619.composefirebasedb.di.domainModule
+import com.fjr619.composefirebasedb.di.viewModelModule
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.android.ext.android.inject
@@ -22,7 +24,9 @@ class ComposeFirebaseApp: Application() {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
             androidContext(this@ComposeFirebaseApp)
             modules(
-                dataModule
+                dataModule,
+                domainModule,
+                viewModelModule
             )
         }
 

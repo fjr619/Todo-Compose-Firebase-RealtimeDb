@@ -16,19 +16,28 @@ class RealtimeDatabaseSourceImpl(
     override fun getItems(): Flow<List<WeightEntity>> = callbackFlow {
         val valueEvent = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val items = snapshot.getValue<List<WeightEntity>>()
-                trySend(items ?: throw Exception("null data"))
+                val responses = snapshot.children
+                val results = mutableListOf<WeightEntity>()
+
+                for (item in responses) {
+                    val data = item.getValue(WeightEntity::class.java)
+                    data?.let {
+                        results.add(it)
+                    }
+                }
+
+                trySend(results)
 
             }
 
             override fun onCancelled(error: DatabaseError) {
-                throw error.toException()
+                close(error.toException())
             }
         }
 
         databaseReference.addValueEventListener(valueEvent)
         awaitClose {
-            databaseReference.addValueEventListener(valueEvent)
+            databaseReference.removeEventListener(valueEvent)
             close()
         }
     }

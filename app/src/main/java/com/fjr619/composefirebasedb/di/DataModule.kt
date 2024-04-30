@@ -17,5 +17,4 @@ val dataModule = module {
     single<DatabaseReference>{ (get() as FirebaseDatabase).getReference("comppose-firebase-data") }
 
     single<RealtimeDatabaseSource> { RealtimeDatabaseSourceImpl(get()) }
-    single<AppRepository> { AppRepositoryImpl(get()) }
 }
