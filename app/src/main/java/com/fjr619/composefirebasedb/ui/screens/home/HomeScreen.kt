@@ -32,7 +32,7 @@ fun HomeScreen(
             CenterAlignedTopAppBar(title = { Text(text = "Home") })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }, shape = RoundedCornerShape(12.dp)) {
+            FloatingActionButton(onClick = { navigateToTask(Task()) }, shape = RoundedCornerShape(12.dp)) {
                 Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
             }
         }

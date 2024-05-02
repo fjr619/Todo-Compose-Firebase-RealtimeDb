@@ -43,11 +43,11 @@ class AppRepositoryImpl(
     }
 
     override suspend fun addTask(task: Task) {
-        return realtimeDatabaseSource.addTask(task.toEntity())
+        realtimeDatabaseSource.addTask(task.toEntity())
     }
 
     override suspend fun updateTask(task: Task) {
-
+        realtimeDatabaseSource.updateTask(task.toEntity())
     }
 
     override suspend fun setCompleted(task: Task, taskCompleted: Boolean) {

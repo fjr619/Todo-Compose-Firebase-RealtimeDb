@@ -78,7 +78,7 @@ class RealtimeDatabaseSourceImpl(
     }
 
     override suspend fun updateTask(task: TaskEntity) {
-        TODO("Not yet implemented")
+        databaseReference.child(task.id).setValue(task)
     }
 
     override suspend fun setCompleted(task: TaskEntity, completed: Boolean) {
