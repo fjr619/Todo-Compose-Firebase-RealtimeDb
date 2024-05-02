@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.map
 class AppRepositoryImpl(
     private val realtimeDatabaseSource: RealtimeDatabaseSource
 ) : AppRepository {
+    override fun connection(): Flow<Boolean> = realtimeDatabaseSource.connection()
+
     override fun readActiveTasks(): Flow<RequestState<List<Task>>> {
         return realtimeDatabaseSource.readActiveTasks()
             .map {

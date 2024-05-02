@@ -10,8 +10,29 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class RealtimeDatabaseSourceImpl(
-    private val databaseReference: DatabaseReference
+    private val taskReference: DatabaseReference,
+    private val connectionReference: DatabaseReference,
 ): RealtimeDatabaseSource {
+    override fun connection(): Flow<Boolean> = callbackFlow {
+        val valueEvent = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val connected = snapshot.getValue(Boolean::class.java) ?: false
+                trySend(connected)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                trySend(false)
+            }
+
+        }
+
+        connectionReference.addValueEventListener(valueEvent)
+        awaitClose {
+            connectionReference.removeEventListener(valueEvent)
+            close()
+        }
+    }
+
     override fun readActiveTasks(): Flow<List<TaskEntity>> = callbackFlow {
         val valueEvent = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -34,9 +55,9 @@ class RealtimeDatabaseSourceImpl(
             }
         }
 
-        databaseReference.orderByChild("completed").equalTo(false).addValueEventListener(valueEvent)
+        taskReference.orderByChild("completed").equalTo(false).addValueEventListener(valueEvent)
         awaitClose {
-            databaseReference.removeEventListener(valueEvent)
+            taskReference.orderByChild("completed").removeEventListener(valueEvent)
             close()
         }
     }
@@ -63,37 +84,37 @@ class RealtimeDatabaseSourceImpl(
             }
         }
 
-        databaseReference.orderByChild("completed").equalTo(true).addValueEventListener(valueEvent)
+        taskReference.orderByChild("completed").equalTo(true).addValueEventListener(valueEvent)
         awaitClose {
-            databaseReference.removeEventListener(valueEvent)
+            taskReference.orderByChild("completed").removeEventListener(valueEvent)
             close()
         }
     }
 
     override suspend fun addTask(task: TaskEntity) {
-        val key = databaseReference.push().key
+        val key = taskReference.push().key
         key?.let {nonNullKey ->
-            databaseReference.child(nonNullKey).setValue(task.copy(id = nonNullKey))
+            taskReference.child(nonNullKey).setValue(task.copy(id = nonNullKey))
         }
     }
 
     override suspend fun updateTask(task: TaskEntity) {
-        databaseReference.child(task.id).setValue(task)
+        taskReference.child(task.id).setValue(task)
     }
 
     override suspend fun setCompleted(task: TaskEntity, completed: Boolean) {
         val map = HashMap<String,Any>()
         map["completed"] = completed
-        databaseReference.child(task.id).updateChildren(map)
+        taskReference.child(task.id).updateChildren(map)
     }
 
     override suspend fun setFavorite(task: TaskEntity, favorite: Boolean) {
         val map = HashMap<String,Any>()
         map["favorite"] = favorite
-        databaseReference.child(task.id).updateChildren(map)
+        taskReference.child(task.id).updateChildren(map)
     }
 
     override suspend fun deleteTask(task: TaskEntity) {
-        databaseReference.child(task.id).removeValue()
+        taskReference.child(task.id).removeValue()
     }
 }

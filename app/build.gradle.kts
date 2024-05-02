@@ -81,4 +81,6 @@ dependencies {
     //koin
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+
+    implementation("com.github.stevdza-san:MessageBarCompose:1.0.8")
 }

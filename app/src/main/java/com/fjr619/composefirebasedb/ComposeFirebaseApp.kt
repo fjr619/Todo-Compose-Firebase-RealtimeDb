@@ -11,11 +11,12 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import org.koin.core.qualifier.named
 
 class ComposeFirebaseApp: Application() {
 
     private val firebaseDatabase by inject<FirebaseDatabase>()
-    private val databaseReference by inject<DatabaseReference>()
+    private val databaseReference by inject<DatabaseReference>(named("taskReferences"))
 
     override fun onCreate() {
         super.onCreate()

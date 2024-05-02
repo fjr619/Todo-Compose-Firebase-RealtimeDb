@@ -32,6 +32,11 @@ class HomeViewModel(
 
     init {
         onEvent(HomeEvent.GetData)
+        viewModelScope.launch {
+            repository.connection().collect {
+                println("connection $it")
+            }
+        }
     }
 
     fun onEvent(event: HomeEvent) {
