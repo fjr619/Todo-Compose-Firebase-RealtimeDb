@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 class RealtimeDatabaseSourceImpl(
     private val databaseReference: DatabaseReference
 ): RealtimeDatabaseSource {
-    override fun getItems(): Flow<List<TaskEntity>> = callbackFlow {
+    override fun readActiveTasks(): Flow<List<TaskEntity>> = callbackFlow {
         val valueEvent = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val responses = snapshot.children
@@ -34,10 +34,62 @@ class RealtimeDatabaseSourceImpl(
             }
         }
 
-        databaseReference.addValueEventListener(valueEvent)
+        databaseReference.orderByChild("completed").equalTo(false).addValueEventListener(valueEvent)
         awaitClose {
             databaseReference.removeEventListener(valueEvent)
             close()
         }
+    }
+
+    override fun readCompletedTasks(): Flow<List<TaskEntity>> = callbackFlow {
+        val valueEvent = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val responses = snapshot.children
+                val results = mutableListOf<TaskEntity>()
+
+                for (item in responses) {
+                    val data = item.getValue(TaskEntity::class.java)
+                    data?.let {
+                        results.add(it)
+                    }
+                }
+
+                trySend(results)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
+
+        databaseReference.orderByChild("completed").equalTo(true).addValueEventListener(valueEvent)
+        awaitClose {
+            databaseReference.removeEventListener(valueEvent)
+            close()
+        }
+    }
+
+    override suspend fun addTask(task: TaskEntity) {
+        val key = databaseReference.push().key
+        key?.let {nonNullKey ->
+            databaseReference.child(nonNullKey).setValue(task.copy(id = nonNullKey))
+        }
+    }
+
+    override suspend fun updateTask(task: TaskEntity) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setCompleted(task: TaskEntity, completed: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setFavorite(task: TaskEntity, favorite: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteTasl(task: TaskEntity) {
+        TODO("Not yet implemented")
     }
 }

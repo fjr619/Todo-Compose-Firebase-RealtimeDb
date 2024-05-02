@@ -1,7 +1,9 @@
 package com.fjr619.composefirebasedb.data.repository
 
 import com.fjr619.composefirebasedb.data.model.toDomain
+import com.fjr619.composefirebasedb.data.model.toEntity
 import com.fjr619.composefirebasedb.data.realtime_database.RealtimeDatabaseSource
+import com.fjr619.composefirebasedb.domain.model.RequestState
 import com.fjr619.composefirebasedb.domain.model.Task
 import com.fjr619.composefirebasedb.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +13,7 @@ class AppRepositoryImpl(
     private val realtimeDatabaseSource: RealtimeDatabaseSource
 ): AppRepository {
     override fun getItems(): Flow<Result<List<Task>>> {
-        return realtimeDatabaseSource.getItems()
+        return realtimeDatabaseSource.readActiveTasks()
             .map {
                 it.map {entity ->
                     entity.toDomain()
@@ -24,5 +26,39 @@ class AppRepositoryImpl(
                 }
 
             }
+    }
+
+    override fun readActiveTasks(): Flow<RequestState<List<Task>>> {
+       return realtimeDatabaseSource.readActiveTasks()
+           .map {
+               it.map { entity ->
+                   entity.toDomain()
+               }
+           }.map {
+               if (it.isNotEmpty()) {
+                   RequestState.Success(it)
+               } else {
+                   RequestState.Error("empty data")
+               }
+           }
+    }
+
+    override fun readCompletedTasks(): Flow<RequestState<List<Task>>> {
+        return realtimeDatabaseSource.readCompletedTasks()
+            .map {
+                it.map { entity ->
+                    entity.toDomain()
+                }
+            }.map {
+                if (it.isNotEmpty()) {
+                    RequestState.Success(it)
+                } else {
+                    RequestState.Error("empty data")
+                }
+            }
+    }
+
+    override suspend fun addTask(task: Task) {
+        return realtimeDatabaseSource.addTask(task.toEntity())
     }
 }
