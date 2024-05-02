@@ -11,36 +11,20 @@ import kotlinx.coroutines.flow.map
 
 class AppRepositoryImpl(
     private val realtimeDatabaseSource: RealtimeDatabaseSource
-): AppRepository {
-    override fun getItems(): Flow<Result<List<Task>>> {
+) : AppRepository {
+    override fun readActiveTasks(): Flow<RequestState<List<Task>>> {
         return realtimeDatabaseSource.readActiveTasks()
             .map {
-                it.map {entity ->
+                it.map { entity ->
                     entity.toDomain()
                 }
             }.map {
                 if (it.isNotEmpty()) {
-                    Result.success(it)
+                    RequestState.Success(it)
                 } else {
-                    Result.failure(Exception("empty data"))
+                    RequestState.Error("empty data")
                 }
-
             }
-    }
-
-    override fun readActiveTasks(): Flow<RequestState<List<Task>>> {
-       return realtimeDatabaseSource.readActiveTasks()
-           .map {
-               it.map { entity ->
-                   entity.toDomain()
-               }
-           }.map {
-               if (it.isNotEmpty()) {
-                   RequestState.Success(it)
-               } else {
-                   RequestState.Error("empty data")
-               }
-           }
     }
 
     override fun readCompletedTasks(): Flow<RequestState<List<Task>>> {
@@ -60,5 +44,21 @@ class AppRepositoryImpl(
 
     override suspend fun addTask(task: Task) {
         return realtimeDatabaseSource.addTask(task.toEntity())
+    }
+
+    override suspend fun updateTask(task: Task) {
+
+    }
+
+    override suspend fun setCompleted(task: Task, taskCompleted: Boolean) {
+        realtimeDatabaseSource.setCompleted(task.toEntity(), taskCompleted)
+    }
+
+    override suspend fun setFavorite(task: Task, isFavorite: Boolean) {
+        realtimeDatabaseSource.setFavorite(task.toEntity(), isFavorite)
+    }
+
+    override suspend fun deleteTask(task: Task) {
+        realtimeDatabaseSource.deleteTask(task.toEntity())
     }
 }

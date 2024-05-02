@@ -82,14 +82,18 @@ class RealtimeDatabaseSourceImpl(
     }
 
     override suspend fun setCompleted(task: TaskEntity, completed: Boolean) {
-        TODO("Not yet implemented")
+        val map = HashMap<String,Any>()
+        map["completed"] = completed
+        databaseReference.child(task.id).updateChildren(map)
     }
 
     override suspend fun setFavorite(task: TaskEntity, favorite: Boolean) {
-        TODO("Not yet implemented")
+        val map = HashMap<String,Any>()
+        map["favorite"] = favorite
+        databaseReference.child(task.id).updateChildren(map)
     }
 
-    override suspend fun deleteTasl(task: TaskEntity) {
-        TODO("Not yet implemented")
+    override suspend fun deleteTask(task: TaskEntity) {
+        databaseReference.child(task.id).removeValue()
     }
 }

@@ -1,5 +1,6 @@
 package com.fjr619.composefirebasedb.ui.screens.home.components
 
+import android.text.style.TtsSpan.TimeBuilder
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -95,35 +96,31 @@ fun DisplayTasks(
             onError = {
                 ErrorScreen(message = it)
             },
-            onSuccess = { listTodo ->
-                if (listTodo.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        state = scrollState
-                    ) {
-                        items(
-                            items = listTodo,
-                            key = { task -> task.hashCode() }
-                        ) { task ->
-                            TaskView(
-                                showActive = showActive,
-                                task = task,
-                                onSelect = { onSelect?.invoke(task) },
-                                onComplete = { selectedTask, completed ->
-                                    onComplete?.invoke(selectedTask,completed)
-                                },
-                                onFavorite = { selectedTask, favorite ->
-                                    onFavorite?.invoke(selectedTask, favorite)
-                                },
-                                onDelete = { selectedTask ->
-                                    taskToDelete = selectedTask
-                                    showDialog = true
-                                }
-                            )
-                        }
+            onSuccess = { tasks ->
+                LazyColumn(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    state = scrollState
+                ) {
+                    items(
+                        items = tasks,
+                        key = { task -> task.hashCode() }
+                    ) { task ->
+                        TaskView(
+                            showActive = showActive,
+                            task = task,
+                            onSelect = { onSelect?.invoke(task) },
+                            onComplete = { selectedTask, completed ->
+                                onComplete?.invoke(selectedTask,completed)
+                            },
+                            onFavorite = { selectedTask, favorite ->
+                                onFavorite?.invoke(selectedTask, favorite)
+                            },
+                            onDelete = { selectedTask ->
+                                taskToDelete = selectedTask
+                                showDialog = true
+                            }
+                        )
                     }
-                } else {
-                    ErrorScreen()
                 }
             },
         )

@@ -12,7 +12,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -28,8 +30,6 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.asStateFlow()
 
-    private val databaseReference: DatabaseReference by inject<DatabaseReference>()
-
     init {
         onEvent(HomeEvent.GetData)
     }
@@ -39,9 +39,33 @@ class HomeViewModel(
             is HomeEvent.GetData -> {
                 getTasks()
             }
-            is HomeEvent.Delete -> {}
-            is HomeEvent.SetFavorite -> {}
-            is HomeEvent.SetCompleted -> {}
+            is HomeEvent.Delete -> {
+                setDelete(event.task)
+            }
+            is HomeEvent.SetFavorite -> {
+                setFavorite(event.task, event.isFavorite)
+            }
+            is HomeEvent.SetCompleted -> {
+                setCompleted(event.task, event.completed)
+            }
+        }
+    }
+
+    private fun setDelete(task: Task) {
+        viewModelScope.launch{
+            repository.deleteTask(task)
+        }
+    }
+
+    private fun setFavorite(task: Task, favorite: Boolean) {
+        viewModelScope.launch {
+            repository.setFavorite(task, favorite)
+        }
+    }
+
+    private fun setCompleted(task: Task, completed: Boolean) {
+        viewModelScope.launch {
+            repository.setCompleted(task, completed)
         }
     }
 
@@ -52,27 +76,25 @@ class HomeViewModel(
                 completedTask = RequestState.Loading
             )
         }
-        viewModelScope.launch {
-            val readActive = async { repository.readActiveTasks() }
-            val readCompleted = async { repository.readCompletedTasks() }
 
-            combine(readActive.await(), readCompleted.await()) { active, completed ->
-                Pair(active, completed)
-            }.collect { result ->
+        viewModelScope.launch {
+            repository.readActiveTasks().collectLatest { result ->
                 _state.update {
                     it.copy(
-                        activeTask = result.first,
-                        completedTask = result.second
+                        activeTask = result
                     )
                 }
             }
         }
-    }
 
-    fun add() {
-        val key = databaseReference.push().key
-        key?.let {nonNullKey ->
-            databaseReference.child(nonNullKey).setValue(TaskEntity().copy(id = nonNullKey))
+        viewModelScope.launch {
+            repository.readCompletedTasks().collectLatest { result ->
+                _state.update {
+                    it.copy(
+                        completedTask = result
+                    )
+                }
+            }
         }
     }
 }

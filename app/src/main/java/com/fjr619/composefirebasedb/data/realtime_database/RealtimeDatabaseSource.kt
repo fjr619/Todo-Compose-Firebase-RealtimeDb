@@ -10,8 +10,5 @@ interface RealtimeDatabaseSource {
     suspend fun updateTask(task: TaskEntity)
     suspend fun setCompleted(task: TaskEntity, completed: Boolean)
     suspend fun setFavorite(task: TaskEntity, favorite: Boolean)
-    suspend fun deleteTasl(task: TaskEntity)
-
-
-
+    suspend fun deleteTask(task: TaskEntity)
 }
