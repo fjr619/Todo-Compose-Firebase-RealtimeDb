@@ -32,11 +32,7 @@ class HomeViewModel(
 
     init {
         onEvent(HomeEvent.GetData)
-        viewModelScope.launch {
-            repository.connection().collect {
-                println("connection $it")
-            }
-        }
+
     }
 
     fun onEvent(event: HomeEvent) {
@@ -80,6 +76,16 @@ class HomeViewModel(
                 activeTask = RequestState.Loading,
                 completedTask = RequestState.Loading
             )
+        }
+
+        viewModelScope.launch {
+            repository.connection().collect { result ->
+                _state.update {
+                    it.copy(
+                        connection = result
+                    )
+                }
+            }
         }
 
         viewModelScope.launch {

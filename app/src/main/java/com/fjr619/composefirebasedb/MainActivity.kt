@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
             KoinAndroidContext {
                 ComposeFirebaseDBTheme {
                     // A surface container using the 'background' color from the theme
-
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
