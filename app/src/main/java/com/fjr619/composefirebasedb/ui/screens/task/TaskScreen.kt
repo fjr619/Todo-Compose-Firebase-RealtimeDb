@@ -1,6 +1,13 @@
 package com.fjr619.composefirebasedb.ui.screens.task
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -9,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun TaskScreen(
     state: TaskUiState,
@@ -66,10 +76,16 @@ fun TaskScreen(
             )
         },
         floatingActionButton = {
-            if (state.currentTask.title.isNotEmpty() && state.currentTask.desc.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = state.currentTask.title.isNotEmpty() && state.currentTask.desc.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 FloatingActionButton(
+                    modifier = Modifier,
+                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
                     onClick = {
-                        if(state.currentTask.id.isEmpty()) {
+                        if (state.currentTask.id.isEmpty()) {
                             onTaskEvent(TaskEvent.Add)
                         } else {
                             onTaskEvent(TaskEvent.Update)
@@ -88,7 +104,10 @@ fun TaskScreen(
         }
     ) {
         BasicTextField(
-            modifier = Modifier.fillMaxSize().padding(it).padding(horizontal = 24.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = it)
+                .padding(horizontal = 24.dp),
             textStyle = TextStyle(
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                 color = MaterialTheme.colorScheme.onSurface
