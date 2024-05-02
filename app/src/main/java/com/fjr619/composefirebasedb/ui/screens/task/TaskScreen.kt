@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
@@ -38,6 +39,9 @@ fun TaskScreen(
     onNavigateUp: () -> Unit,
     onTaskEvent: (TaskEvent) -> Unit,
 ) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,6 +89,7 @@ fun TaskScreen(
                     modifier = Modifier,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
                     onClick = {
+                        keyboardController?.hide()
                         if (state.currentTask.id.isEmpty()) {
                             onTaskEvent(TaskEvent.Add)
                         } else {
