@@ -24,8 +24,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -41,6 +45,8 @@ fun TaskScreen(
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
@@ -48,6 +54,7 @@ fun TaskScreen(
                 title = {
                     //https://rivaldy.medium.com/jetpack-compose-customize-your-searchbar-with-basictextfield-c1cdcbd3e3aa
                     BasicTextField(
+                        modifier = Modifier.focusRequester(focusRequester),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
@@ -69,7 +76,11 @@ fun TaskScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onNavigateUp
+                        onClick = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                            onNavigateUp()
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -89,13 +100,15 @@ fun TaskScreen(
                     modifier = Modifier,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
                     onClick = {
-                        keyboardController?.hide()
+
                         if (state.currentTask.id.isEmpty()) {
                             onTaskEvent(TaskEvent.Add)
                         } else {
                             onTaskEvent(TaskEvent.Update)
                         }
 
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
                         onNavigateUp()
                     },
                     shape = RoundedCornerShape(12.dp)
@@ -112,7 +125,8 @@ fun TaskScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = it)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .focusRequester(focusRequester),
             textStyle = TextStyle(
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                 color = MaterialTheme.colorScheme.onSurface

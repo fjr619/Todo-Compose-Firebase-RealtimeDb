@@ -98,7 +98,7 @@ fun DisplayTasks(
             },
             onSuccess = { tasks ->
                 LazyColumn(
-                    modifier = Modifier.padding(horizontal = 24.dp),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
                     state = scrollState
                 ) {
                     items(

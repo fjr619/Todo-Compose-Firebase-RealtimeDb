@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.playsService)
+    alias(libs.plugins.kotlinx.serialization)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -81,4 +83,6 @@ dependencies {
     //koin
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+
+    implementation(libs.kotlinx.serialization.json)
 }

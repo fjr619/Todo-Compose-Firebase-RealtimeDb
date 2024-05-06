@@ -26,6 +26,7 @@ fun <T> RequestState<T>.DisplayResult(
     }
 ) {
 
+    //https://slack-chats.kotlinlang.org/t/10309327/hello-i-m-trying-to-use-animatedcontent-to-animate-my-conten
     AnimatedContent(
         targetState = this,
         label = "",

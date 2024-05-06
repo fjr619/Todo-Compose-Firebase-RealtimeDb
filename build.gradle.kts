@@ -4,5 +4,6 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.playsService) apply false
+    alias(libs.plugins.kotlinx.serialization) apply false
 }
 true // Needed to make the Suppress annotation work for the plugins block
