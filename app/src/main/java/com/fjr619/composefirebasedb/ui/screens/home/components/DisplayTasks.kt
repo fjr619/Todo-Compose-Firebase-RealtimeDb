@@ -1,6 +1,5 @@
 package com.fjr619.composefirebasedb.ui.screens.home.components
 
-import android.text.style.TtsSpan.TimeBuilder
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fjr619.composefirebasedb.domain.model.RequestState
@@ -38,6 +39,8 @@ fun DisplayTasks(
     onDelete: ((Task) -> Unit)? = null,
 ) {
     val scrollState = rememberLazyListState()
+    val haptic = LocalHapticFeedback.current
+
 
     var showDialog by remember { mutableStateOf(false) }
     var taskToDelete: Task? by remember { mutableStateOf(null) }
@@ -55,6 +58,7 @@ fun DisplayTasks(
             },
             confirmButton = {
                 Button(onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onDelete?.invoke(taskToDelete!!)
                     showDialog = false
                     taskToDelete = null
@@ -98,7 +102,9 @@ fun DisplayTasks(
             },
             onSuccess = { tasks ->
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 24.dp),
                     state = scrollState
                 ) {
                     items(
@@ -108,14 +114,19 @@ fun DisplayTasks(
                         TaskView(
                             showActive = showActive,
                             task = task,
-                            onSelect = { onSelect?.invoke(task) },
+                            onSelect = {
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                onSelect?.invoke(task)
+                            },
                             onComplete = { selectedTask, completed ->
-                                onComplete?.invoke(selectedTask,completed)
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                onComplete?.invoke(selectedTask, completed)
                             },
                             onFavorite = { selectedTask, favorite ->
                                 onFavorite?.invoke(selectedTask, favorite)
                             },
                             onDelete = { selectedTask ->
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 taskToDelete = selectedTask
                                 showDialog = true
                             }

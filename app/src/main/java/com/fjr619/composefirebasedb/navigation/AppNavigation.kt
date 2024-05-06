@@ -2,7 +2,9 @@ package com.fjr619.composefirebasedb.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -23,6 +25,7 @@ fun AppNavigation() {
         navController = navController,
         startDestination = AppRoute.RootNav
     ) {
+
         navigation<AppRoute.RootNav>(
             startDestination = AppRoute.HomeScreen
         ) {
@@ -35,8 +38,10 @@ fun AppNavigation() {
                 HomeScreen(
                     state = state,
                     navigateToTask = {
-                        sharedViewModel.set(it)
-                        navController.navigate(AppRoute.TaskScreen)
+                        if (navController.lifecycleIsResumed()) {
+                            sharedViewModel.set(it)
+                            navController.navigate(AppRoute.TaskScreen)
+                        }
                     },
                     onEvent = homeViewModel::onEvent
                 )
@@ -56,7 +61,9 @@ fun AppNavigation() {
                 TaskScreen(
                     state = state,
                     onNavigateUp = {
-                        navController.navigateUp()
+                        if (navController.lifecycleIsResumed()) {
+                            navController.navigateUp()
+                        }
                     },
                     onTaskEvent = taskViewModel::onEvent
                 )
@@ -64,3 +71,5 @@ fun AppNavigation() {
         }
     }
 }
+
+fun NavController.lifecycleIsResumed() = this.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
