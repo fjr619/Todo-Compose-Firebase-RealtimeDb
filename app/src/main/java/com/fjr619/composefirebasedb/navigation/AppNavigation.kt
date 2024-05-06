@@ -1,9 +1,12 @@
 package com.fjr619.composefirebasedb.navigation
 
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,6 +37,12 @@ fun AppNavigation() {
                 val sharedViewModel =
                     entry.sharedViewModel(navController = appNavController.navController)
                 val state by homeViewModel.state.collectAsStateWithLifecycle()
+
+                Button(onClick = dropUnlessResumed{
+                    // do something
+                }) {
+                    Text(text = "Click me")
+                }
 
                 HomeScreen(
                     state = state,
