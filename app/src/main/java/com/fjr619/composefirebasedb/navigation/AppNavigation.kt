@@ -19,10 +19,10 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AppNavigation() {
-    val navController = rememberNavController()
+    val appNavController = rememberAppNavController()
 
     NavHost(
-        navController = navController,
+        navController = appNavController.navController,
         startDestination = AppRoute.RootNav
     ) {
 
@@ -32,15 +32,14 @@ fun AppNavigation() {
             composable<AppRoute.HomeScreen> { entry ->
                 val homeViewModel = koinViewModel<HomeViewModel>()
                 val sharedViewModel =
-                    entry.sharedViewModel(navController = navController)
+                    entry.sharedViewModel(navController = appNavController.navController)
                 val state by homeViewModel.state.collectAsStateWithLifecycle()
 
                 HomeScreen(
                     state = state,
                     navigateToTask = {
-                        if (navController.lifecycleIsResumed()) {
+                        appNavController.navigateToTask {
                             sharedViewModel.set(it)
-                            navController.navigate(AppRoute.TaskScreen)
                         }
                     },
                     onEvent = homeViewModel::onEvent
@@ -50,7 +49,7 @@ fun AppNavigation() {
             composable<AppRoute.TaskScreen>(
 //                                typeMap = mapOf(typeOf<Task>() to TaskParametersType)
             ) { entry ->
-                val sharedViewModel = entry.sharedViewModel(navController)
+                val sharedViewModel = entry.sharedViewModel(appNavController.navController)
                 val currentTask by sharedViewModel.currentTask.collectAsStateWithLifecycle()
                 val taskViewModel = koinViewModel<TaskViewModel>(parameters = { parametersOf(currentTask) })
                 val state by taskViewModel.state.collectAsStateWithLifecycle()
@@ -61,9 +60,7 @@ fun AppNavigation() {
                 TaskScreen(
                     state = state,
                     onNavigateUp = {
-                        if (navController.lifecycleIsResumed()) {
-                            navController.navigateUp()
-                        }
+                        appNavController.navigateUp()
                     },
                     onTaskEvent = taskViewModel::onEvent
                 )
@@ -71,5 +68,3 @@ fun AppNavigation() {
         }
     }
 }
-
-fun NavController.lifecycleIsResumed() = this.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
