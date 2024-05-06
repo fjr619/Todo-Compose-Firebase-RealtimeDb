@@ -24,6 +24,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.fjr619.composefirebasedb.domain.model.Task
+import com.fjr619.composefirebasedb.navigation.AppNavigation
+import com.fjr619.composefirebasedb.navigation.AppRoute
 import com.fjr619.composefirebasedb.ui.screens.home.HomeScreen
 import com.fjr619.composefirebasedb.ui.screens.home.HomeViewModel
 import com.fjr619.composefirebasedb.ui.screens.sharedViewModel
@@ -54,53 +56,7 @@ class MainActivity : ComponentActivity() {
             ChangeSystemBarsTheme(!isSystemInDarkTheme())
             KoinAndroidContext {
                 ComposeFirebaseDBTheme {
-                    // A surface container using the 'background' color from the theme
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = AppNavigation.RootNav
-                    ) {
-
-                        navigation<AppNavigation.RootNav>(
-                            startDestination = AppNavigation.HomeScreen
-                        ) {
-                            composable<AppNavigation.HomeScreen> { entry ->
-                                val homeViewModel = koinViewModel<HomeViewModel>()
-                                val sharedViewModel =
-                                    entry.sharedViewModel(navController = navController)
-                                val state by homeViewModel.state.collectAsStateWithLifecycle()
-
-                                HomeScreen(
-                                    state = state,
-                                    navigateToTask = {
-                                        sharedViewModel.set(it)
-                                        navController.navigate(AppNavigation.TaskScreen)
-                                    },
-                                    onEvent = homeViewModel::onEvent
-                                )
-                            }
-
-                            composable<AppNavigation.TaskScreen>(
-//                                typeMap = mapOf(typeOf<Task>() to TaskParametersType)
-                            ) { entry ->
-                                val sharedViewModel = entry.sharedViewModel(navController)
-                                val currentTask by sharedViewModel.currentTask.collectAsStateWithLifecycle()
-                                val taskViewModel = koinViewModel<TaskViewModel>(parameters = { parametersOf(currentTask) })
-                                val state by taskViewModel.state.collectAsStateWithLifecycle()
-
-//                                val taskParameter = entry.toRoute<AppNavigation.TaskScreen>().task
-//                                println("taskParameter $taskParameter")
-
-                                TaskScreen(
-                                    state = state,
-                                    onNavigateUp = {
-                                        navController.navigateUp()
-                                    },
-                                    onTaskEvent = taskViewModel::onEvent
-                                )
-                            }
-                        }
-                    }
+                    AppNavigation()
                 }
             }
         }
@@ -133,30 +89,5 @@ private fun ComponentActivity.ChangeSystemBarsTheme(lightTheme: Boolean) {
     }
 }
 
-sealed class AppNavigation {
-    @Serializable
-    data object RootNav: AppNavigation()
 
-    @Serializable
-    data object HomeScreen: AppNavigation()
-
-    @Serializable
-    data object TaskScreen: AppNavigation()
-}
-
-//Still buggy, waiting for next compose navigation version
-//val TaskParametersType = object : NavType<Task>(isNullableAllowed = false){
-//    override fun get(bundle: Bundle, key: String): Task?         {
-//        return bundle.getParcelable(key)
-//    }
-//
-//    override fun parseValue(value: String): Task {
-//        return Json.decodeFromString<Task>(value)
-//    }
-//
-//    override fun put(bundle: Bundle, key: String, value: Task) {
-//        bundle.putParcelable(key, value)
-//    }
-//
-//}
 
