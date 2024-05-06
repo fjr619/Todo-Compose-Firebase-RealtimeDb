@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.fjr619.composefirebasedb.R
 import com.fjr619.composefirebasedb.domain.model.Task
 
@@ -34,13 +35,14 @@ fun LazyItemScope.TaskView(
     onDelete: (Task) -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .animateItemPlacement()
+        modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
             .fillMaxWidth()
-            .clickable {
-                if (showActive) onSelect(task)
-                else onDelete(task)
-            },
+            .clickable(
+                onClick = dropUnlessResumed {
+                    if (showActive) onSelect(task)
+                    else onDelete(task)
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -59,7 +61,7 @@ fun LazyItemScope.TaskView(
             )
         }
         IconButton(
-            onClick = {
+            onClick = dropUnlessResumed {
                 if (showActive) onFavorite(task, !task.favorite)
                 else onDelete(task)
             }

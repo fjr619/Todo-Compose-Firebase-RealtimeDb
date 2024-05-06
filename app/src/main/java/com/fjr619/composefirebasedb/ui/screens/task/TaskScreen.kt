@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 
 @OptIn(
     ExperimentalMaterial3Api::class
@@ -76,7 +77,7 @@ fun TaskScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
+                        onClick = dropUnlessResumed {
                             focusManager.clearFocus()
                             keyboardController?.hide()
                             onNavigateUp()
@@ -99,7 +100,7 @@ fun TaskScreen(
                 FloatingActionButton(
                     modifier = Modifier,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
-                    onClick = {
+                    onClick = dropUnlessResumed {
 
                         if (state.currentTask.id.isEmpty()) {
                             onTaskEvent(TaskEvent.Add)

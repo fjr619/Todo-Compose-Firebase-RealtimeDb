@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.fjr619.composefirebasedb.R
 
 @Composable
@@ -34,7 +35,7 @@ fun ExitAlertDialog(cancel: () -> Unit, ok: () -> Unit) {
         },
         confirmButton = {
             TextButton(
-                onClick = {
+                onClick = dropUnlessResumed {
                     ok()
                 }) {
                 Text(
@@ -46,7 +47,7 @@ fun ExitAlertDialog(cancel: () -> Unit, ok: () -> Unit) {
         },
         dismissButton = {
             TextButton(
-                onClick = {
+                onClick = dropUnlessResumed {
                     cancel()
                 }) {
                 Text(

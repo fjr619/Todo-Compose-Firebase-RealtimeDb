@@ -29,15 +29,11 @@ class AppNavController(
         navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
 
     fun navigateToTask(doSomething: () -> Unit) {
-        if (lifecycleIsResumed()) {
             doSomething()
             navController.navigate(AppRoute.TaskScreen)
-        }
     }
 
     fun navigateUp() {
-        if (lifecycleIsResumed()) {
-            navController.navigateUp()
-        }
+        navController.navigateUp()
     }
 }

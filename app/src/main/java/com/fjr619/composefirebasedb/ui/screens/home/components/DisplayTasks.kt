@@ -23,6 +23,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.fjr619.composefirebasedb.domain.model.RequestState
 import com.fjr619.composefirebasedb.domain.model.Task
 import com.fjr619.composefirebasedb.ui.screens.components.ErrorScreen
@@ -57,7 +58,7 @@ fun DisplayTasks(
                 )
             },
             confirmButton = {
-                Button(onClick = {
+                Button(onClick = dropUnlessResumed {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onDelete?.invoke(taskToDelete!!)
                     showDialog = false
@@ -68,7 +69,7 @@ fun DisplayTasks(
             },
             dismissButton = {
                 TextButton(
-                    onClick = {
+                    onClick = dropUnlessResumed {
                         taskToDelete = null
                         showDialog = false
                     }
@@ -76,7 +77,7 @@ fun DisplayTasks(
                     Text(text = "Cancel")
                 }
             },
-            onDismissRequest = {
+            onDismissRequest = dropUnlessResumed {
                 taskToDelete = null
                 showDialog = false
             }
