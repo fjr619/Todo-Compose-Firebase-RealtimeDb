@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-//            ChangeSystemBarsTheme(!isSystemInDarkTheme())
+            ChangeSystemBarsTheme(!isSystemInDarkTheme())
             KoinAndroidContext {
                 ComposeFirebaseDBTheme {
                     AppNavigation()
