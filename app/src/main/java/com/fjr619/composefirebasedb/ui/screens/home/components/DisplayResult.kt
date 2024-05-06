@@ -19,18 +19,16 @@ fun <T> RequestState<T>.DisplayResult(
     onIdle: (@Composable () -> Unit)? = null,
     onLoading: @Composable () -> Unit,
     onSuccess: @Composable (T) -> Unit,
-    onError: @Composable (String) -> Unit,
-    transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
-        fadeIn(tween(durationMillis = 300)) togetherWith
-                fadeOut(tween(durationMillis = 300))
-    }
+    onError: @Composable (String) -> Unit
 ) {
-
     //https://slack-chats.kotlinlang.org/t/10309327/hello-i-m-trying-to-use-animatedcontent-to-animate-my-conten
     AnimatedContent(
         targetState = this,
         label = "",
-        transitionSpec = transitionSpec,
+        transitionSpec = {
+            fadeIn(tween(durationMillis = 300)) togetherWith
+                    fadeOut(tween(durationMillis = 300))
+        },
         contentKey = { this::class.java }
     ) {
         when(it) {
