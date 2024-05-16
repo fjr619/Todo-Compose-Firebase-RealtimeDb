@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.fjr619.composefirebasedb.domain.model.Task
 
 @Composable
 fun rememberAppNavController(
     navHostController: NavHostController = rememberNavController()
-): AppNavController = remember(navHostController){
+): AppNavController = remember(navHostController) {
     AppNavController(navHostController)
 }
 
@@ -29,8 +29,12 @@ class AppNavController(
         navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
 
     fun navigateToTask(doSomething: () -> Unit) {
-            doSomething()
-            navController.navigate(AppRoute.TaskScreen)
+        doSomething()
+        navController.navigate(AppRoute.TaskScreen)
+    }
+
+    fun navigateToTask(task: Task) {
+        navController.navigate(AppRoute.TaskScreen(task))
     }
 
     fun navigateUp() {

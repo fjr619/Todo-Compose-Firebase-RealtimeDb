@@ -9,5 +9,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel<HomeViewModel> { HomeViewModel(get()) }
     viewModel<SharedViewModel> { SharedViewModel() }
-    viewModel<TaskViewModel> {  params -> TaskViewModel(params.get(), get()) }
+    viewModel<TaskViewModel> { TaskViewModel(get(), get()) }
 }
+
